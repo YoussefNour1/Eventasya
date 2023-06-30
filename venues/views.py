@@ -2,6 +2,7 @@ import base64
 
 import requests
 from django.contrib.auth import get_user_model
+from django.core.paginator import Paginator
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
@@ -11,7 +12,7 @@ from rest_framework.throttling import UserRateThrottle, AnonRateThrottle
 from accounts.permissions import IsVenueOwner, IsNormalUser
 from .models import Venue, VenueImages, LegalDocuments, VenueBooking, Review, FavouriteVenues
 from .serializers import VenueSerializer, VenueImagesSerializer, VenueBookingSerializer, LegalDocumentsSerializer, \
-    ReviewSerializer
+    ReviewSerializer, FavouriteVenuesSerializer
 from rest_framework.views import *
 from rest_framework import generics, status
 
@@ -261,21 +262,79 @@ class ReviewsListCreateView(generics.ListCreateAPIView):
         return Response(review_serializer.data, status=status.HTTP_201_CREATED)
 
 
-class FavouriteVenueCreateDestroyView(generics.CreateAPIView, generics.DestroyAPIView):
-    serializer_class = VenueSerializer
+# class FavouriteVenueCreateDestroyView(generics.ListCreateAPIView, generics.DestroyAPIView):
+#     serializer_class = FavouriteVenuesSerializer
+#     pagination_class = PageNumberPagination
+#
+#     def get_queryset(self):
+#         user = self.request.user
+#         return user.favouriteVenues.all()
+#
+#     def perform_create(self, serializer):
+#         pass
+#
+#     def post(self, request, *args, **kwargs):
+#         user = self.request.user
+#         venue = Venue.objects.get(pk=self.kwargs["venueId"])
+#         favourite_venue, created = FavouriteVenues.objects.get_or_create(user=user, venue=venue)
+#         print(favourite_venue, created)
+#
+#         queryset = self.get_queryset()
+#         page = self.paginate_queryset(queryset)
+#
+#         serialized_data = FavouriteVenuesSerializer(page, many=True).data
+#         return Response(serialized_data, status=status.HTTP_201_CREATED)
+#
+#     def delete(self, request, *args, **kwargs):
+#         user = self.request.user
+#         venue = Venue.objects.filter(pk=self.kwargs["venueId"])
+#         fav, deleted = FavouriteVenues.objects.filter(user=user, venue=venue).delete()
+#         print(fav, deleted)
+#         queryset = self.get_queryset()
+#         page = self.paginate_queryset(queryset)
+#
+#         serialized_data = FavouriteVenuesSerializer(page, many=True).data
+#         return Response(serialized_data, status=status.HTTP_200_OK)
 
-    def post(self, request, *args, **kwargs):
-        user = self.request.user
-        venueId = self.kwargs["venueId"]
-        user.favouriteVenues.add(venueId)
-        favourite_venue, created = FavouriteVenues.objects.get_or_create(user=user, venue=venueId)
-        print(favourite_venue, created)
-        return Response(VenueSerializer(user.favouriteVenues.all()).data, status=status.HTTP_201_CREATED)
-
-
-class FavouriteVenueListView(generics.ListAPIView):
-    serializer_class = VenueSerializer
+class FavouriteVenueCreateDestroyView(generics.ListCreateAPIView, generics.DestroyAPIView):
+    serializer_class = FavouriteVenuesSerializer
+    pagination_class = PageNumberPagination
+    lookup_field = 'venue_id'
 
     def get_queryset(self):
         user = self.request.user
         return user.favouriteVenues.all()
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        venue = Venue.objects.get(pk=self.kwargs["venue_id"])
+        serializer.save(user=user, venue=venue)
+
+    def perform_destroy(self, instance):
+        instance.delete()
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        super().create(request, *args, **kwargs)
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serialized_data = FavouriteVenuesSerializer(page, many=True).data
+            return self.get_paginated_response(serialized_data)
+        serialized_data = FavouriteVenuesSerializer(queryset, many=True).data
+        return Response(serialized_data, status=status.HTTP_201_CREATED)
+
+    def destroy(self, request, *args, **kwargs):
+        super().destroy(request, *args, **kwargs)
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serialized_data = FavouriteVenuesSerializer(page, many=True).data
+            return self.get_paginated_response(serialized_data)
+        serialized_data = FavouriteVenuesSerializer(queryset, many=True).data
+        return Response(serialized_data, status=status.HTTP_204_NO_CONTENT)

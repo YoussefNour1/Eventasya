@@ -140,9 +140,9 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# class FavouriteVenuesSerializer(serializers.ModelSerializer):
-#     venue = VenueSerializer(many=True)
-#
-#     class Meta:
-#         model = FavouriteVenues
-#         fields = ['venue']
+class FavouriteVenuesSerializer(serializers.ModelSerializer):
+    venue = VenueSerializer(read_only=True)
+
+    class Meta:
+        model = FavouriteVenues
+        fields = ['venue']

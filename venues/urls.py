@@ -4,7 +4,7 @@ from .views import (
     VenueImagesListCreateView, VenueBookingListCreateView,
     VenueBookingRetrieveUpdateDestroyView, VenueOwnerVenueListView,
     VenueOwnerBookingListView, UserBookingListView, VenueImagesUpdateDelete, LegalDocsCreateView,
-    ReviewsListCreateView, FavouriteVenueCreateDestroyView, FavouriteVenueListView
+    ReviewsListCreateView, FavouriteVenueCreateDestroyView
 )
 
 urlpatterns = [
@@ -21,8 +21,8 @@ urlpatterns = [
     path('user/bookings/<int:pk>/', VenueBookingRetrieveUpdateDestroyView.as_view(), name='venue-booking-details'),
 
     path('<int:venueId>/reviews/', ReviewsListCreateView.as_view(), name='review-list-create'),
-    path('<int:venueId>/favourites/', FavouriteVenueCreateDestroyView.as_view(), name='review-create-destroy'),
-    path('user/favourites/', FavouriteVenueListView.as_view(), name='review-list'),
+    path('<int:venue_id>/favourites/', FavouriteVenueCreateDestroyView.as_view(), name='review-create-destroy'),
+    path('favourites/', FavouriteVenueCreateDestroyView.as_view(), name='review-list'),
 
     # path('paypal/create/order/', views.CreateOrderViewRemote.as_view(), name='ordercreate'),
     # path('paypal/capture/order/', views.CaptureOrderView.as_view(), name='captureorder')

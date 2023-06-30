@@ -54,13 +54,41 @@ class FavouriteEventView(generics.ListCreateAPIView, generics.DestroyAPIView):
 
     def get_queryset(self):
         user = self.request.user
-        return user.favouriteevent_set.all()
+        return user.favouriteEvents.all()
+
+    def perform_create(self, serializer):
+        user = self.request.user
+        event = Event.objects.get(pk=self.kwargs["pk"])
+        serializer.save(user=user, event=event)
+
+    def perform_destroy(self, instance):
+        instance.delete()
+
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
     def delete(self, request, *args, **kwargs):
-        user = request.user
-        event = Event.objects.get(self.kwargs['eventId'])
-        user.favouriteevent_set.remove(event)
-        return user.favouriteevent_set.all()
+        return self.destroy(request, *args, **kwargs)
+
+    def create(self, request, *args, **kwargs):
+        super().create(request, *args, **kwargs)
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serialized_data = FavouriteEventSerializer(page, many=True).data
+            return self.get_paginated_response(serialized_data)
+        serialized_data = FavouriteEventSerializer(queryset, many=True).data
+        return Response(serialized_data, status=status.HTTP_201_CREATED)
+
+    def destroy(self, request, *args, **kwargs):
+        super().destroy(request, *args, **kwargs)
+        queryset = self.get_queryset()
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serialized_data = FavouriteEventSerializer(page, many=True).data
+            return self.get_paginated_response(serialized_data)
+        serialized_data = FavouriteEventSerializer(queryset, many=True).data
+        return Response(serialized_data, status=status.HTTP_204_NO_CONTENT)
 
 
 # class EventBookAPIView(generics.ListCreateAPIView):

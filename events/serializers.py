@@ -27,7 +27,7 @@ class EventSerializer(serializers.ModelSerializer):
 
 
 class FavouriteEventSerializer(serializers.ModelSerializer):
-    event = EventSerializer(many=True)
+    event = EventSerializer(read_only=True)
 
     class Meta:
         model = FavouriteEvent

@@ -54,5 +54,5 @@ class EventBooking(models.Model):
 
 
 class FavouriteEvent(models.Model):
-    user = models.ManyToManyField(User)
-    event = models.ManyToManyField(Event)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='favouriteEvents')
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)

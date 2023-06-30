@@ -112,5 +112,8 @@ def update_venue_rate(sender, instance, **kwargs):
 
 
 class FavouriteVenues(models.Model):
-    user = models.ManyToManyField(User, related_name="favouriteVenues")
-    venue = models.ManyToManyField(Venue)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="favouriteVenues")
+    venue = models.ForeignKey(Venue, on_delete=models.CASCADE)
+
+    class Meta:
+        unique_together = ('user', 'venue')
