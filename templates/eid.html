@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Amiri&display=swap');
+
+        body {
+            text-align: center;
+            background-color: #f2f2f2;
+            font-family: 'Amiri', serif;
+            color: #333;
+        }
+
+        h1 {
+            font-size: 28px;
+            margin-top: 100px;
+            opacity: 0;
+        }
+
+        @media only screen and (max-width: 600px) {
+            h1 {
+                font-size: 20px;
+            }
+        }
+
+        .animation {
+            opacity: 0;
+        }
+
+        .heart {
+            display: inline-block;
+            font-size: 40px;
+            color: red;
+            animation: heartbeat 1.5s infinite;
+        }
+
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.2);
+            }
+            100% {
+                transform: scale(1);
+            }
+        }
+
+        /* Update the colors for each statement */
+        .animation:nth-child(1) {
+            color: blue;
+        }
+
+        .animation:nth-child(2) {
+            color: green;
+        }
+
+        .animation:nth-child(3) {
+            color: purple;
+        }
+    </style>
+    <title>عيدية سمورة القمورة</title>
+</head>
+<body>
+<div id="text-container">
+    <h1 class="animation">...الى عزيزي فاتح الموقع</h1>
+    <h1 class="animation">كل سنة وانت طيب</h1>
+    <h1 class="animation">بتمنالك عيد سعيد عليك يارب</h1>
+</div>
+<div class="heart">&#10084;</div>
+<div>تم التنفيذ بواسطة الخبير الجامد اوي يوسف نور</div>
+
+<script>
+    // Delay the typing animation to start after the page loads
+    window.addEventListener('load', function () {
+        const container = document.getElementById('text-container');
+        const statements = Array.from(container.querySelectorAll('.animation'));
+        let index = 0;
+
+        function animateText() {
+            const statement = statements[index];
+            const text = statement.innerText;
+            statement.innerText = '';
+            statement.style.opacity = 1;
+            let letterIndex = 0;
+
+            function typeLetter() {
+                if (text[letterIndex] !== ' ') {
+                    statement.innerText += text[letterIndex];
+                } else {
+                    statement.innerText += '\u00A0'; // Non-breaking space for proper spacing
+                }
+                letterIndex++;
+
+                if (letterIndex < text.length) {
+                    setTimeout(typeLetter, 100);
+                } else {
+                    if (index < statements.length - 1) {
+                        index++;
+                        setTimeout(animateText, 1000);
+                    }
+                }
+            }
+
+            typeLetter();
+        }
+
+        animateText();
+    });
+</script>
+</body>
+</html>
