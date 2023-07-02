@@ -5,8 +5,9 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.response import Response
 
-from .models import Event
-from .serializers import EventSerializer, TicketSerializer, FavouriteEventSerializer  # EventBookingSerializer
+from .models import Event, EventBooking
+from .serializers import EventSerializer, TicketSerializer, FavouriteEventSerializer, \
+    EventBookingSerializer  # EventBookingSerializer
 
 
 class EventListCreateAPIView(generics.ListCreateAPIView):
@@ -17,6 +18,9 @@ class EventListCreateAPIView(generics.ListCreateAPIView):
     filterset_fields = ['city', 'type']
     search_fields = ['name', 'date']
     order_fields = ['date', 'start_time']
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
 
 
 class EventRetrieveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
@@ -91,13 +95,10 @@ class FavouriteEventView(generics.ListCreateAPIView, generics.DestroyAPIView):
         return Response(serialized_data, status=status.HTTP_204_NO_CONTENT)
 
 
-# class EventBookAPIView(generics.ListCreateAPIView):
-#     serializer_class = EventBookingSerializer
-#     permission_classes = [IsAuthenticated, ]
-#
-#     def get_queryset(self):
-#         user = self.request.user
-#         return user.eventbooking_set.all()
-#
-#     def post(self, request, *args, **kwargs):
-#         user = self.request.user
+class EventBookAPIView(generics.ListCreateAPIView):
+    serializer_class = EventBookingSerializer
+    permission_classes = [IsAuthenticated, ]
+    queryset = EventBooking.objects.all()
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)

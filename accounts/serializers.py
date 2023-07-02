@@ -48,19 +48,13 @@ class UserSerializer(serializers.ModelSerializer):
         fields = ('id', 'email', 'name', 'role', 'gender', 'birthdate', 'contact_number', 'img')
 
     def update(self, instance, validated_data):
-        # Handle profile image update
         if 'img' in validated_data:
-            # Delete the existing image file
             instance.img.delete()
-            # Assign the new image file
             instance.img = validated_data['img']
-            # Clear the image field from validated_data to avoid duplicate saving
             validated_data.pop('img', None)
 
-        # Update other fields
         for attr, value in validated_data.items():
             setattr(instance, attr, value)
 
-        # Save the updated instance
         instance.save()
         return instance

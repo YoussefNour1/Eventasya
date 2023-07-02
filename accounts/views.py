@@ -1,4 +1,6 @@
 import datetime
+
+import firebase_admin
 import pyotp as pyotp
 from django.contrib.auth import authenticate, get_user_model
 from django.template.loader import render_to_string
@@ -13,6 +15,8 @@ from rest_framework import status
 from rest_framework.views import APIView
 from Eventasya.utils import send_email
 from .serializers import UserSerializer, SignupSerializer
+import firebase_admin
+from firebase_admin import credentials, auth
 
 # Create your views here.
 
@@ -28,6 +32,26 @@ class GenerateKey:
         OTP = totp.now()
         print(f"Your OTP is {OTP} and it will expire at {totp.timecode(datetime.datetime.now()) + 86400}")
         return {"totp": secret, "OTP": OTP}
+
+
+def generate_firebase_token(user):
+    if not firebase_admin._apps:
+        firebase_admin.initialize_app()
+    # Get the user's unique identifier from DRF
+    user_id = str(user.id)
+
+    try:
+        # Create a Firebase user with the user's unique identifier as the UID
+        firebase_user = auth.create_user(email=user.email, display_name=user.name, photo_url=user.img.path)
+        # Generate Firebase token
+        firebase_token = auth.create_custom_token(firebase_user.email)
+        return firebase_token
+    except auth.UidAlreadyExistsError:
+        firebase_user = auth.get_user(uid=user_id)
+        # Generate Firebase token
+        firebase_token = auth.create_custom_token(firebase_user.email)
+
+        return firebase_token
 
 
 class SignUpAPIView(CreateAPIView):
@@ -89,11 +113,15 @@ def signup_verify(request: Request):
                 user.otp = None
                 user.activation_key = None
                 user.save()
-                # Generate token for the user
                 token, _ = Token.objects.get_or_create(user=user)
 
-                return Response({"message": "Your account has been successfully activated!", "token": token.key},
-                                status=status.HTTP_202_ACCEPTED)
+                # Get the Firebase Authentication token
+                firebase_token = generate_firebase_token(user)
+
+                return Response(
+                    {"message": "Your account has been successfully activated!", "firebase_token": firebase_token,
+                     "token": token.key},
+                    status=status.HTTP_202_ACCEPTED)
             else:
                 return Response({"message": "Given OTP has expired!"}, status=status.HTTP_408_REQUEST_TIMEOUT)
     except User.DoesNotExist:
@@ -109,7 +137,8 @@ class LoginView(APIView):
             password=request.data['password'])
         if user is not None:
             token, _ = Token.objects.get_or_create(user=user)
-            return Response({'token': token.key}, status=status.HTTP_202_ACCEPTED)
+
+            return Response({'firebase_token': generate_firebase_token(user), 'token': token.key}, status=status.HTTP_202_ACCEPTED)
         return Response(data={"message": "invalid email or password"}, status=status.HTTP_403_FORBIDDEN)
 
     def get(self, request: Request):

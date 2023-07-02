@@ -20,7 +20,6 @@ class Event(models.Model):
     city = models.CharField(max_length=100)
     date = models.DateField(default=timezone.datetime.now)
     type = models.CharField(max_length=100)
-    # price = models.DecimalField(max_digits=8, decimal_places=2)
     is_approved = models.BooleanField(default=False)
     contact_number = models.CharField(max_length=12)
     pypal_number = models.CharField(max_length=12, null=True, blank=True)

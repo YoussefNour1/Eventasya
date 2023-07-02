@@ -42,7 +42,8 @@ class Venue(models.Model):
     max_capacity = models.PositiveIntegerField()
     facilities = models.TextField()
     view_type = models.CharField(max_length=50)
-    status = models.CharField(max_length=10, choices=[("active", "Active"), ("suspended", "Suspended")], default="suspended")
+    status = models.CharField(max_length=10, choices=[("active", "Active"), ("suspended", "Suspended")],
+                              default="suspended", blank=True)
     rate = models.DecimalField(decimal_places=2, max_digits=4, default=0)
 
     def __str__(self):
@@ -65,6 +66,9 @@ class LegalDocuments(models.Model):
 class VenueImages(models.Model):
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name="venue_images")
     image = models.ImageField(upload_to=venue_image_upload_to)
+
+    def __str__(self):
+        return self.venue.name
 
 
 STATUS = [

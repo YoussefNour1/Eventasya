@@ -1,7 +1,8 @@
 import os
 from pathlib import Path
-
+import firebase_admin
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
+from firebase_admin import credentials
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -198,3 +199,7 @@ SESSION_COOKIE_SECURE = False
 CSRF_TRUSTED_ORIGINS = [
     'https://eventasya-production.up.railway.app',
 ]
+
+
+cred = credentials.Certificate("eventasya-platform-firebase.json")
+firebase_admin.initialize_app(credential=cred)
