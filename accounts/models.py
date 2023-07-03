@@ -17,7 +17,10 @@ class CustomUserManager(BaseUserManager):
 
         email = self.normalize_email(email)
         user = self.model(email=email, **other_fields)
-        user.set_password(password)
+        if password:
+            user.set_password(password)
+        else:
+            user.set_password(None)
         user.save()
         return user
 
@@ -45,6 +48,7 @@ class User(AbstractUser):
     username = None
     email = models.EmailField(max_length=255, unique=True)
     name = models.CharField(max_length=255, null=True, blank=True)
+    password = models.CharField(max_length=255, null=True, blank=True)
     role = models.CharField(max_length=50, choices=Role.choices)
     gender = models.CharField(max_length=2, choices=[("M", "Male"), ("F", "Female")], blank=True, null=True)
     birthdate = models.DateField(null=True, blank=True)

@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     'accounts',
     'venues',
     'events',
+    'posts',
 ]
 
 JAZZMIN_UI_TWEAKS = {
@@ -121,6 +122,12 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
+        # 'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': 'railway',
+        # 'USER': 'root',
+        # 'PASSWORD': 'hdXZHMV7v00ka6sytLV7',
+        # 'HOST': 'containers-us-west-99.railway.app',  # Usually 'localhost' for local development
+        # 'PORT': '7824',
     }
 }
 

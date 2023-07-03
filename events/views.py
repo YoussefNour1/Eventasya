@@ -11,7 +11,7 @@ from .serializers import EventSerializer, TicketSerializer, FavouriteEventSerial
 
 
 class EventListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Event.objects.all()
+    queryset = Event.objects.filter(is_approved=True)
     serializer_class = EventSerializer
     permission_classes = [AllowAny, ]
     filter_backends = [DjangoFilterBackend, SearchFilter, OrderingFilter]
@@ -52,7 +52,7 @@ class TicketsListCreateView(generics.ListCreateAPIView):
         return Response(TicketSerializer(tickets, many=True), status=status.HTTP_201_CREATED)
 
 
-class FavouriteEventView(generics.ListCreateAPIView, generics.DestroyAPIView):
+class FavouriteEventView(generics.CreateAPIView, generics.DestroyAPIView):
     permission_classes = [IsAuthenticated, ]
     serializer_class = FavouriteEventSerializer
 

@@ -26,9 +26,9 @@ class VenueSerializer(serializers.ModelSerializer):
     class Meta:
         model = Venue
         fields = ('id', 'name', 'owner', 'address', 'city', 'description', 'category',
-                  'price_per_hour', 'start_time', 'end_time', 'fits_with', 'min_capacity',
+                  'price_per_hour', 'start_time', 'end_time', 'fits_with', 'min_capacity', 'phone_number',
                   'max_capacity', 'facilities', 'status', 'view_type', 'venue_images',
-                  'legal_documents')
+                  'legal_documents', 'rate')
 
 
 class VenueBookingSerializer(serializers.ModelSerializer):
@@ -134,6 +134,8 @@ class UserBookingSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
+    user_email = serializers.EmailField(source='user.email')
+    user_name = serializers.CharField(source='user.name')
 
     class Meta:
         model = Review

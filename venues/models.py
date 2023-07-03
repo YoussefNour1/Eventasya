@@ -41,6 +41,7 @@ class Venue(models.Model):
     min_capacity = models.PositiveIntegerField()
     max_capacity = models.PositiveIntegerField()
     facilities = models.TextField()
+    phone_number = models.CharField(max_length=15)
     view_type = models.CharField(max_length=50)
     status = models.CharField(max_length=10, choices=[("active", "Active"), ("suspended", "Suspended")],
                               default="suspended", blank=True)

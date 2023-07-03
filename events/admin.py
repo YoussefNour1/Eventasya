@@ -9,7 +9,7 @@ from events.models import Event, EventBooking
 
 
 @admin.register(Event)
-class VenueAdmin(admin.ModelAdmin):
+class EventAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'view_owner_link', 'city', 'is_approved', 'show_total_bookings')
     list_display_links = ('name', )
     list_filter = ('is_approved', 'city', )
@@ -28,3 +28,7 @@ class VenueAdmin(admin.ModelAdmin):
     show_total_bookings.short_description = "Total Booking Price"
     view_owner_link.short_description = "user"
 
+
+@admin.register(EventBooking)
+class EventBookingAdmin(admin.ModelAdmin):
+    list_display = ('event', 'user', 'total_price')

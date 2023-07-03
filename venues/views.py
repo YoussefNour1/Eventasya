@@ -23,7 +23,7 @@ User = get_user_model()
 
 
 class VenueListCreateView(generics.ListCreateAPIView):
-    queryset = Venue.objects.all().order_by('id')
+    queryset = Venue.objects.filter(status='active').order_by('id')
     serializer_class = VenueSerializer
     permission_classes = [AllowAny, ]
     pagination_class = PageNumberPagination
