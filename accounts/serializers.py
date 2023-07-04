@@ -6,7 +6,7 @@ from django.core.exceptions import ValidationError
 from rest_framework.authtoken.models import Token
 from rest_framework import serializers
 
-from accounts.models import User
+from accounts.models import User, PreviousWork, EventPlanner, WorkImages
 
 
 class SignupSerializer(serializers.ModelSerializer):
@@ -58,3 +58,27 @@ class UserSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
+
+
+class EventPlannerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = EventPlanner
+        fields = ['id', 'name', 'email', 'contact_number', 'img']
+
+
+class WorkImagesSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WorkImages
+        fields = ['id', 'image']
+
+
+class PreviousWorksSerializer(serializers.ModelSerializer):
+    images = WorkImagesSerializer(read_only=True, many=True)
+    planner_name = serializers.CharField(source='event_planner.name', read_only=True)
+    planner_email = serializers.CharField(source='event_planner.email', read_only=True)
+    planner_number = serializers.CharField(source='event_planner.contact_number', read_only=True)
+
+    class Meta:
+        model = PreviousWork
+        fields = '__all__'
+        read_only_fields = ['event_planner']

@@ -52,13 +52,13 @@ class TicketsListCreateView(generics.ListCreateAPIView):
         return Response(TicketSerializer(tickets, many=True), status=status.HTTP_201_CREATED)
 
 
-class FavouriteEventView(generics.CreateAPIView, generics.DestroyAPIView):
+class FavouriteEventView(generics.ListCreateAPIView, generics.DestroyAPIView):
     permission_classes = [IsAuthenticated, ]
     serializer_class = FavouriteEventSerializer
 
     def get_queryset(self):
         user = self.request.user
-        return user.favouriteEvents.all()
+        return user.favouriteEvents.all().order_by('id')
 
     def perform_create(self, serializer):
         user = self.request.user

@@ -10,6 +10,10 @@ def upload_to(instance, filename):
     return 'users/images/{user}.{filename}'.format(user=instance.email, filename=filename.split('.')[-1])
 
 
+def upload_to_prev_work(instance, filename):
+    return 'prev/images/{user}/{filename}'.format(user=instance.previous_work.event_planner, filename=filename)
+
+
 class CustomUserManager(BaseUserManager):
     def create_user(self, email, password, **other_fields):
         if not email:
@@ -54,7 +58,6 @@ class User(AbstractUser):
     birthdate = models.DateField(null=True, blank=True)
     img = models.ImageField("Image", upload_to=upload_to, null=True, blank=True)
     contact_number = models.CharField(max_length=12, null=True, blank=True)
-    # fav_venues = models.ManyToManyField(Venue, related_name="favourite_venues")
     otp = models.IntegerField(null=True, blank=True)
     activation_key = models.CharField(max_length=150, blank=True, null=True)
 
@@ -111,11 +114,18 @@ class EventPlanner(User):
     class Meta:
         proxy = True
 
-# class Profile(models.Model):
-#     user = models.OneToOneField(User, on_delete=models.CASCADE)
-#     gender = models.CharField(max_length=6, choices=[("male", "Male"), ("female", "Female")], blank=True, null=True)
-#     birthdate = models.DateField(null=True, blank=True)
-#     image = models.ImageField("Image", upload_to=upload_to, null=True, blank=True)
-#     contact_number = models.CharField(max_length=12, null=True, blank=True)
-#     otp = models.IntegerField(null=True, blank=True)
-#     activation_key = models.CharField(max_length=150, blank=True, null=True)
+
+class PreviousWork(models.Model):
+    event_planner = models.ForeignKey(EventPlanner, on_delete=models.CASCADE)
+    title = models.CharField(max_length=255)
+    description = models.TextField(null=True, blank=True)
+    date = models.DateField()
+    capacity = models.PositiveIntegerField()
+    event_type = models.CharField(max_length=100)
+
+
+class WorkImages(models.Model):
+    previous_work = models.ForeignKey(PreviousWork, on_delete=models.CASCADE, related_name='images')
+    image = models.ImageField(blank=True, null=True, upload_to=upload_to_prev_work)
+
+

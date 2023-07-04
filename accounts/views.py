@@ -1,6 +1,4 @@
 import datetime
-
-import firebase_admin
 import pyotp as pyotp
 from django.contrib.auth import authenticate, get_user_model
 from django.template.loader import render_to_string
@@ -11,10 +9,12 @@ from rest_framework.generics import CreateAPIView, RetrieveUpdateDestroyAPIView
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.request import Request
-from rest_framework import status
+from rest_framework import status, generics
 from rest_framework.views import APIView
-from Eventasya.utils import send_email
-from .serializers import UserSerializer, SignupSerializer
+from Eventasya.utils import send_http_email
+from .models import PreviousWork, WorkImages, EventPlanner
+from .permissions import IsEventPlanner
+from .serializers import UserSerializer, SignupSerializer, PreviousWorksSerializer, EventPlannerSerializer
 import firebase_admin
 from firebase_admin import credentials, auth
 
@@ -78,7 +78,7 @@ class SignUpAPIView(CreateAPIView):
             email_subject = "OTP Verification"
             email_to = [serializer.data['email']]
             try:
-                send_email(subject=email_subject, message=email_template, email_to=email_to)
+                send_http_email(subject=email_subject, message=email_template, email_to=email_to)
                 user.save()
                 response = {
                     "message": "User created",
@@ -108,7 +108,7 @@ def signup_verify(request: Request):
                 email_template = render_to_string('verified.html', {"first_name": user.name})
                 email_subject = "Account Successfully Activated"
                 email_to = [user.email]
-                send_email(subject=email_subject, message=email_template, email_to=email_to)
+                send_http_email(subject=email_subject, message=email_template, email_to=email_to)
                 user.is_active = True
                 user.otp = None
                 user.activation_key = None
@@ -179,7 +179,7 @@ class ForgotPasswordView(APIView):
         user.save()
 
         email_template = render_to_string('forgot_password_otp.html', {"otp": otp, "first_name": user.name})
-        send_email(subject="Forgot Password OTP", message=email_template, email_to=[email])
+        send_http_email(subject="Forgot Password OTP", message=email_template, email_to=email)
 
         return Response({"message": "OTP sent successfully"}, status=status.HTTP_200_OK)
 
@@ -223,3 +223,47 @@ class ChangePasswordView(APIView):
         user.set_password(password)
         user.save()
         return Response({"message": "Password changed successfully"}, status=status.HTTP_200_OK)
+
+
+class PreviousWorkListCreate(generics.ListCreateAPIView):
+
+    serializer_class = PreviousWorksSerializer
+
+    def get_queryset(self):
+        planner = self.kwargs['planner']
+        return PreviousWork.objects.filter(event_planner_id=planner)
+
+
+class EventPlannersList(generics.ListAPIView):
+    queryset = EventPlanner.objects.all()
+    serializer_class = EventPlannerSerializer
+    permission_classes = [AllowAny]
+
+
+class SinglePrevWork(generics.RetrieveUpdateDestroyAPIView):
+    serializer_class = PreviousWorksSerializer
+    queryset = PreviousWork.objects.all()
+
+
+class PrevWorkCreate(generics.ListAPIView):
+    def get_permissions(self):
+        if self.request.method == 'POST':
+            return [IsEventPlanner()]
+        return [AllowAny()]
+
+    def post(self, request, *args, **kwargs):
+        planner = self.request.user
+        prev_work_serializer = self.serializer_class(data=self.request.data)
+        if prev_work_serializer.is_valid():
+            prev_work = prev_work_serializer.save(event_planner=planner)
+            images = self.request.FILES.getlist('images')
+            work_images = []
+
+            for image in images:
+                image = WorkImages(image=image, previous_work=prev_work)
+                work_images.append(image)
+
+            WorkImages.objects.bulk_create(work_images)
+
+            return Response(prev_work_serializer.data, status=status.HTTP_201_CREATED)
+        return Response(prev_work_serializer.errors)
