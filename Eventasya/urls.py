@@ -33,4 +33,5 @@ urlpatterns = [
     path('accounts/', include('accounts.urls')),
     path('venues/', include('venues.urls')),
     path('events/', include('events.urls')),
+    path('posts/', include('posts.urls')),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -111,7 +111,7 @@ class Review(models.Model):
 @receiver(post_save, sender=Review)
 def update_venue_rate(sender, instance, **kwargs):
     venue = instance.venue
-    new_rate = Review.objects.filter(venue=venue).aggregate(rate_avg=Avg('rate'))['rate_avg']
+    new_rate = Review.objects.filter(venue=venue).aggregate(rate_avg=Avg('rating'))['rate_avg']
     venue.rate = new_rate
     venue.save()
 

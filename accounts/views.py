@@ -42,7 +42,7 @@ def generate_firebase_token(user):
 
     try:
         # Create a Firebase user with the user's unique identifier as the UID
-        firebase_user = auth.create_user(email=user.email, display_name=user.name, photo_url=user.img.path)
+        firebase_user = auth.create_user(email=user.email, display_name=user.name)
         # Generate Firebase token
         firebase_token = auth.create_custom_token(firebase_user.email)
         return firebase_token

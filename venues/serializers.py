@@ -134,12 +134,13 @@ class UserBookingSerializer(serializers.ModelSerializer):
 
 
 class ReviewSerializer(serializers.ModelSerializer):
-    user_email = serializers.EmailField(source='user.email')
-    user_name = serializers.CharField(source='user.name')
+    user_email = serializers.EmailField(source='user.email', read_only=True)
+    user_name = serializers.CharField(source='user.name', read_only=True)
 
     class Meta:
         model = Review
         fields = '__all__'
+        read_only_fields = ['user', 'venue']
 
 
 class FavouriteVenuesSerializer(serializers.ModelSerializer):

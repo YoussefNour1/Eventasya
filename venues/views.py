@@ -253,13 +253,17 @@ class ReviewsListCreateView(generics.ListCreateAPIView):
     def get_queryset(self):
         return Review.objects.select_related('venue').filter(venue_id=self.kwargs['venueId'])
 
-    def post(self, request, *args, **kwargs):
-        data = self.request.data.copy()
-        # data['user'] = self.request.user
-        review_serializer = self.serializer_class(data=data)
-        review_serializer.is_valid(raise_exception=True)
-        review_serializer.save()
-        return Response(review_serializer.data, status=status.HTTP_201_CREATED)
+    def perform_create(self, serializer):
+        c = serializer.save(user=self.request.user, venue_id=self.kwargs['venueId'])
+        print(c)
+
+    # def post(self, request, *args, **kwargs):
+    #     data = self.request.data.copy()
+    #     # data['user'] = self.request.user
+    #     review_serializer = self.serializer_class(data=data)
+    #     review_serializer.is_valid(raise_exception=True)
+    #     review_serializer.save()
+    #     return Response(review_serializer.data, status=status.HTTP_201_CREATED)
 
 
 # class FavouriteVenueCreateDestroyView(generics.ListCreateAPIView, generics.DestroyAPIView):
