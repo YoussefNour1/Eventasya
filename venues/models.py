@@ -22,7 +22,7 @@ class Categories(models.TextChoices):
     OPEN_AIR = "openair", "Open Air"
     YACHT = "yacht", "Yacht"
     CONFERENCE = "conference", "Conference"
-    CLASS_HAll = "class hall", "Class Hall"
+    CLOSED_HAll = "closed hall", "Closed Hall"
 
 
 class Venue(models.Model):

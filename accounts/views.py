@@ -222,6 +222,9 @@ class SinglePrevWork(generics.RetrieveUpdateDestroyAPIView):
 
 
 class PrevWorkCreate(generics.ListAPIView):
+
+    serializer_class = PreviousWorksSerializer
+
     def get_permissions(self):
         if self.request.method == 'POST':
             return [IsEventPlanner()]
