@@ -175,20 +175,15 @@ MEDIA_URL = '/media/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-EMAIL_FROM = 'Eventasya Platform <eventasyaplatform@gmail.com>'
-EMAIL_BCC = os.environ.get('EMAIL_BCC') or ''
-#
-EMAIL_HOST = 'smtp-relay.sendinblue.com'
-EMAIL_PORT = 587
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER') or 'eventasyaplatform@gmail.com'
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD') or 'PGUq0SnkVc9Xvh5N'
-EMAIL_USE_TLS = True
-EMAIL_USE_SSL = False
-
-PAYPAL_CLIENT_ID = os.environ.get('PAYPAL_CLIENT_ID')
-PAYPAL_CLIENT_SECRET = os.environ.get('PAYPAL_CLIENT_SECRET')
-PAYPAL_MODE = 'sandbox'
-PAYPAL_BASE_URL = 'https://api.sandbox.paypal.com'
+# EMAIL_FROM = 'Eventasya Platform <eventasyaplatform@gmail.com>'
+# EMAIL_BCC = os.environ.get('EMAIL_BCC') or ''
+# #
+# EMAIL_HOST = 'smtp-relay.sendinblue.com'
+# EMAIL_PORT = 587
+# EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER') or 'eventasyaplatform@gmail.com'
+# EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD') or 'PGUq0SnkVc9Xvh5N'
+# EMAIL_USE_TLS = True
+# EMAIL_USE_SSL = False
 
 if DEBUG:
     MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']
@@ -201,8 +196,9 @@ DEBUG_TOOLBAR_CONFIG = {
 
 CSRF_COOKIE_SECURE = False
 SESSION_COOKIE_SECURE = False
+
 CSRF_TRUSTED_ORIGINS = [
-    'https://eventasya-production.up.railway.app',
+    'https://eventasya.onrender.com',
 ]
 
 

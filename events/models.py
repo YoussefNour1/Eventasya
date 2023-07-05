@@ -55,7 +55,7 @@ class EventBooking(models.Model):
     payment_id = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"{self.user.email} - {self.event.name}"
+        return f"{self.user} - {self.event.name}"
 
 
 class FavouriteEvent(models.Model):

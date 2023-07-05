@@ -33,11 +33,11 @@ class VenueSerializer(serializers.ModelSerializer):
 
 class VenueBookingSerializer(serializers.ModelSerializer):
     total_price = serializers.DecimalField(max_digits=8, decimal_places=2, read_only=True)
-    # user = serializers.ReadOnlyField()
 
     class Meta:
         model = VenueBooking
         fields = '__all__'
+        read_only_fields = ['user']
 
     def create(self, validated_data):
         venue = validated_data['venue']

@@ -96,6 +96,7 @@ class VenueBooking(models.Model):
     note = models.TextField(null=True, blank=True)
     event_type = models.CharField(max_length=50)
     request_status = models.CharField(max_length=50, choices=STATUS, default='pending')
+    payment_id = models.CharField(max_length=100)
     total_price = models.DecimalField(max_digits=8, decimal_places=2)
 
 
