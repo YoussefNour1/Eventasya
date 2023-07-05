@@ -14,7 +14,7 @@ class EventSerializer(serializers.ModelSerializer):
     class Meta:
         model = Event
         fields = '__all__'
-        read_only_fields =['user', ]
+        read_only_fields = ['user', ]
 
     def create(self, validated_data):
         print(validated_data)
@@ -38,18 +38,24 @@ class FavouriteEventSerializer(serializers.ModelSerializer):
 
 class EventBookingSerializer(serializers.ModelSerializer):
     event_name = serializers.CharField(source='event.name', read_only=True)
-    ticket_type = serializers.CharField(source='ticket.type', read_only=True)
-    ticket_price = serializers.DecimalField(source='ticket.price', max_digits=8, decimal_places=2, read_only=True)
+    ticket_type = serializers.CharField(source='ticket_type.type', read_only=True)
+    ticket_price = serializers.DecimalField(source='ticket_type.price', max_digits=6, decimal_places=2, read_only=True)
 
     class Meta:
         model = EventBooking
-        fields = ['event', 'event_name', 'ticket', 'ticket_type', 'ticket_price', 'quantity', 'total_price',
-                  'payment_type']
-        read_only_fields = ['event_name', 'ticket_type', 'ticket_price', 'total_price']
+        fields = ['id', 'event', 'event_name', 'user', 'ticket_type', 'ticket_price', 'quantity', 'total_price',
+                  'payment_id']
+        read_only_fields = ['event', 'user', 'event_name', 'ticket_type', 'ticket_price', 'total_price']
 
-    def validate(self, attrs):
-        quantity = attrs['quantity']
-        price = self.instance.ticket.price  # Access ticket price from the related ticket instance
-        attrs['total_price'] = price * quantity
-        return attrs
+    def create(self, validated_data):
+        event = validated_data['event']
+        ticket_type = validated_data['ticket_type']
+        quantity = validated_data['quantity']
+        ticket_price = ticket_type.price
+        total_price = ticket_price * quantity
+
+        booking = EventBooking.objects.create(event=event, user=self.context['request'].user, ticket_type=ticket_type,
+                                              quantity=quantity, total_price=total_price)
+
+        return booking
 

@@ -54,7 +54,7 @@ class User(AbstractUser):
     name = models.CharField(max_length=255, null=True, blank=True)
     password = models.CharField(max_length=255, null=True, blank=True)
     role = models.CharField(max_length=50, choices=Role.choices)
-    gender = models.CharField(max_length=2, choices=[("M", "Male"), ("F", "Female")], blank=True, null=True)
+    gender = models.CharField(max_length=6, choices=[("Male", "Male"), ("Female", "Female")], blank=True, null=True)
     birthdate = models.DateField(null=True, blank=True)
     img = models.ImageField("Image", upload_to=upload_to, null=True, blank=True)
     contact_number = models.CharField(max_length=12, null=True, blank=True)

@@ -120,14 +120,14 @@ WSGI_APPLICATION = 'Eventasya.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-        # 'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': 'railway',
-        # 'USER': 'root',
-        # 'PASSWORD': 'hdXZHMV7v00ka6sytLV7',
-        # 'HOST': 'containers-us-west-99.railway.app',  # Usually 'localhost' for local development
-        # 'PORT': '7824',
+        # 'ENGINE': 'django.db.backends.sqlite3',
+        # 'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'railway',
+        'USER': 'root',
+        'PASSWORD': 'PgTONTm4qfCjZrdQxOJ8',
+        'HOST': 'containers-us-west-118.railway.app',  # Usually 'localhost' for local development
+        'PORT': '6717',
     }
 }
 

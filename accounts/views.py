@@ -34,26 +34,6 @@ class GenerateKey:
         return {"totp": secret, "OTP": OTP}
 
 
-def generate_firebase_token(user):
-    if not firebase_admin._apps:
-        firebase_admin.initialize_app()
-    # Get the user's unique identifier from DRF
-    user_id = str(user.id)
-
-    try:
-        # Create a Firebase user with the user's unique identifier as the UID
-        firebase_user = auth.create_user(email=user.email, display_name=user.name)
-        # Generate Firebase token
-        firebase_token = auth.create_custom_token(firebase_user.email)
-        return firebase_token
-    except auth.UidAlreadyExistsError:
-        firebase_user = auth.get_user(uid=user_id)
-        # Generate Firebase token
-        firebase_token = auth.create_custom_token(firebase_user.email)
-
-        return firebase_token
-
-
 class SignUpAPIView(CreateAPIView):
     serializer_class = SignupSerializer
     permission_classes = [AllowAny, ]
@@ -76,7 +56,7 @@ class SignUpAPIView(CreateAPIView):
                 "first_name": serializer.data['name']
             })
             email_subject = "OTP Verification"
-            email_to = [serializer.data['email']]
+            email_to = serializer.data['email']
             try:
                 send_http_email(subject=email_subject, message=email_template, email_to=email_to)
                 user.save()
@@ -107,7 +87,7 @@ def signup_verify(request: Request):
             if verify:
                 email_template = render_to_string('verified.html', {"first_name": user.name})
                 email_subject = "Account Successfully Activated"
-                email_to = [user.email]
+                email_to = user.email
                 send_http_email(subject=email_subject, message=email_template, email_to=email_to)
                 user.is_active = True
                 user.otp = None
@@ -115,11 +95,8 @@ def signup_verify(request: Request):
                 user.save()
                 token, _ = Token.objects.get_or_create(user=user)
 
-                # Get the Firebase Authentication token
-                firebase_token = generate_firebase_token(user)
-
                 return Response(
-                    {"message": "Your account has been successfully activated!", "firebase_token": firebase_token,
+                    {"message": "Your account has been successfully activated!",
                      "token": token.key},
                     status=status.HTTP_202_ACCEPTED)
             else:
@@ -138,7 +115,7 @@ class LoginView(APIView):
         if user is not None:
             token, _ = Token.objects.get_or_create(user=user)
 
-            return Response({'firebase_token': generate_firebase_token(user), 'token': token.key}, status=status.HTTP_202_ACCEPTED)
+            return Response({'token': token.key}, status=status.HTTP_202_ACCEPTED)
         return Response(data={"message": "invalid email or password"}, status=status.HTTP_403_FORBIDDEN)
 
     def get(self, request: Request):
@@ -226,7 +203,6 @@ class ChangePasswordView(APIView):
 
 
 class PreviousWorkListCreate(generics.ListCreateAPIView):
-
     serializer_class = PreviousWorksSerializer
 
     def get_queryset(self):

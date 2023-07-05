@@ -33,7 +33,7 @@ class Event(models.Model):
 class Ticket(models.Model):
     event = models.ForeignKey(Event, on_delete=models.CASCADE, related_name='tickets')
     type = models.CharField(max_length=50)
-    price = models.DecimalField(max_digits=6, decimal_places=2)
+    price = models.DecimalField(max_digits=8, decimal_places=2)
 
     def __str__(self):
         return self.type
@@ -51,7 +51,11 @@ class EventBooking(models.Model):
     payment_type = models.CharField(choices=PaymentType.choices, max_length=10)
     ticket = models.ForeignKey(Ticket, on_delete=models.PROTECT)
     quantity = models.PositiveIntegerField()
-    total_price = models.DecimalField(max_digits=6, decimal_places=2)
+    total_price = models.DecimalField(max_digits=8, decimal_places=2)
+    payment_id = models.CharField(max_length=100)
+
+    def __str__(self):
+        return f"{self.user.email} - {self.event.name}"
 
 
 class FavouriteEvent(models.Model):
