@@ -120,12 +120,18 @@ WSGI_APPLICATION = 'Eventasya.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
+        # 'ENGINE': 'django.db.backends.mysql',
+        # 'NAME': 'railway',
+        # 'USER': 'root',
+        # 'PASSWORD': 'PgTONTm4qfCjZrdQxOJ8',
+        # 'HOST': 'containers-us-west-118.railway.app',  # Usually 'localhost' for local development
+        # 'PORT': '6717',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'railway',
-        'USER': 'root',
-        'PASSWORD': 'PgTONTm4qfCjZrdQxOJ8',
-        'HOST': 'containers-us-west-118.railway.app',  # Usually 'localhost' for local development
-        'PORT': '6717',
+        'USER': 'postgres',
+        'PASSWORD': 'QdhUEMjvELGvBzyn1ics',
+        'HOST': 'containers-us-west-45.railway.app',  # Usually 'localhost' for local development
+        'PORT': '6920',
     }
 }
 
@@ -161,8 +167,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
-STATIC_URL = 'static/'
-STATICFILES_DIRS = os.path.join(BASE_DIR, 'static')
+STATIC_URL = '/static/'
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles_build", 'static')
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
@@ -200,7 +206,6 @@ SESSION_COOKIE_SECURE = False
 CSRF_TRUSTED_ORIGINS = [
     'https://eventasya.onrender.com',
 ]
-
 
 cred = credentials.Certificate("eventasya-platform-firebase.json")
 firebase_admin.initialize_app(credential=cred)

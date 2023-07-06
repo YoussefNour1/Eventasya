@@ -100,5 +100,8 @@ class EventBookAPIView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated, ]
     queryset = EventBooking.objects.all()
 
+    def get_queryset(self):
+        return EventBooking.objects.filter(user=self.request.user)
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        serializer.save(user=self.request.user, event=Event.objects.get(pk=self.kwargs['pk']))

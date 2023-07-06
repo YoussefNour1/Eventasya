@@ -10,5 +10,12 @@
       <jdbc-url>jdbc:sqlite:E:\DjangoProjects\Eventasya\db.sqlite3</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
+    <data-source source="LOCAL" name="verceldb" uuid="27aabc2e-3697-4b71-8011-3c5f9fa13cb1">
+      <driver-ref>postgresql</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>org.postgresql.Driver</jdbc-driver>
+      <jdbc-url>jdbc:postgresql://ep-dry-bread-166195-pooler.us-east-1.postgres.vercel-storage.com:5432/verceldb</jdbc-url>
+      <working-dir>$ProjectFileDir$</working-dir>
+    </data-source>
   </component>
 </project>
