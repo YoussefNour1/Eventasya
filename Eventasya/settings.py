@@ -120,18 +120,18 @@ WSGI_APPLICATION = 'Eventasya.wsgi.application'
 
 DATABASES = {
     'default': {
-        # 'ENGINE': 'django.db.backends.mysql',
-        # 'NAME': 'railway',
-        # 'USER': 'root',
-        # 'PASSWORD': 'PgTONTm4qfCjZrdQxOJ8',
-        # 'HOST': 'containers-us-west-118.railway.app',  # Usually 'localhost' for local development
-        # 'PORT': '6717',
-        'ENGINE': 'django.db.backends.postgresql',
+        'ENGINE': 'django.db.backends.mysql',
         'NAME': 'railway',
-        'USER': 'postgres',
-        'PASSWORD': 'QdhUEMjvELGvBzyn1ics',
-        'HOST': 'containers-us-west-45.railway.app',  # Usually 'localhost' for local development
-        'PORT': '6920',
+        'USER': 'root',
+        'PASSWORD': 'PgTONTm4qfCjZrdQxOJ8',
+        'HOST': 'containers-us-west-118.railway.app',  # Usually 'localhost' for local development
+        'PORT': '6717',
+        # 'ENGINE': 'django.db.backends.postgresql',
+        # 'NAME': 'railway',
+        # 'USER': 'postgres',
+        # 'PASSWORD': 'QdhUEMjvELGvBzyn1ics',
+        # 'HOST': 'containers-us-west-45.railway.app',  # Usually 'localhost' for local development
+        # 'PORT': '6920',
     }
 }
 
