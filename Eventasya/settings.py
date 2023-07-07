@@ -206,6 +206,10 @@ SESSION_COOKIE_SECURE = False
 CSRF_TRUSTED_ORIGINS = [
     'https://eventasya.onrender.com',
 ]
+import firebase_admin
+from firebase_admin import credentials
 
+# Configure the storage bucket URL
 cred = credentials.Certificate("eventasya-platform-firebase.json")
 firebase_admin.initialize_app(credential=cred)
+FIREBASE_STORAGE_BUCKET = 'gs://eventasya-platform-app.appspot.com'

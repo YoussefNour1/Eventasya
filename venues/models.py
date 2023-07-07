@@ -4,6 +4,8 @@ from django.db.models import Avg
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.utils import timezone
+from firebase_admin import storage
+
 from accounts.models import VenueOwner
 
 User = get_user_model()
@@ -63,6 +65,21 @@ class LegalDocuments(models.Model):
     def __str__(self):
         return f'{self.venue.name}'
 
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.upload_files_to_firebase_storage()
+
+    def upload_files_to_firebase_storage(self):
+        file_fields = ['tax_card', 'commercial_register', 'license_agreement',
+                       'rental_contract', 'ownership_contract', 'national_id']
+
+        for field_name in file_fields:
+            file = getattr(self, field_name)
+            if file:
+                file_path = f'venues/legalDocs/{self.venue.id}/{file.name}'
+                blob = storage.bucket().blob(file_path)
+                blob.upload_from_file(file, content_type=file.content_type)
+
 
 class VenueImages(models.Model):
     venue = models.ForeignKey(Venue, on_delete=models.CASCADE, related_name="venue_images")
@@ -70,6 +87,27 @@ class VenueImages(models.Model):
 
     def __str__(self):
         return self.venue.name
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.upload_image_to_firebase_storage()
+
+    def upload_image_to_firebase_storage(self):
+        image_path = self.image.path
+        destination_path = f'venues/images/{self.venue.id}/{self.image.name}'
+        blob = storage.bucket().blob(destination_path)
+        blob.upload_from_filename(image_path)
+        self.image.delete()  # Delete the temporarily stored image
+
+    def delete(self, *args, **kwargs):
+        super().delete(*args, **kwargs)
+        self.delete_image_from_firebase_storage()
+
+    def delete_image_from_firebase_storage(self):
+        destination_path = f'venues/images/{self.venue.id}/{self.image.name}'
+        blob = storage.bucket().blob(destination_path)
+        if blob.exists():
+            blob.delete()
 
 
 STATUS = [

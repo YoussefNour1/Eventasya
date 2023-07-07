@@ -1,8 +1,6 @@
 import base64
 
-import requests
 from django.contrib.auth import get_user_model
-from django.core.paginator import Paginator
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework.filters import SearchFilter, OrderingFilter
 from rest_framework.pagination import PageNumberPagination
@@ -232,21 +230,6 @@ class VenueImagesUpdateDelete(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = VenueImagesSerializer
 
 
-# def paypalToken(client_id, client_secret):
-#     url = "https://api.sandbox.paypal.com/v1/oauth2/token"
-#     data = {
-#         "client_id": client_id,
-#         "client_secret": client_secret,
-#         "grant_type": "client_credentials"
-#     }
-#     headers = {
-#         "Content-Type": "application/x-www-form-urlencoded",
-#         "Authorization": "Basic {0}".format(base64.b64encode((client_id + ":" + client_secret).encode()).decode())
-#     }
-#     token = requests.post(url, data, headers=headers)
-#     return token.json()['access_token']
-
-
 class ReviewsListCreateView(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
     serializer_class = ReviewSerializer
@@ -258,48 +241,6 @@ class ReviewsListCreateView(generics.ListCreateAPIView):
         c = serializer.save(user=self.request.user, venue_id=self.kwargs['venueId'])
         print(c)
 
-    # def post(self, request, *args, **kwargs):
-    #     data = self.request.data.copy()
-    #     # data['user'] = self.request.user
-    #     review_serializer = self.serializer_class(data=data)
-    #     review_serializer.is_valid(raise_exception=True)
-    #     review_serializer.save()
-    #     return Response(review_serializer.data, status=status.HTTP_201_CREATED)
-
-
-# class FavouriteVenueCreateDestroyView(generics.ListCreateAPIView, generics.DestroyAPIView):
-#     serializer_class = FavouriteVenuesSerializer
-#     pagination_class = PageNumberPagination
-#
-#     def get_queryset(self):
-#         user = self.request.user
-#         return user.favouriteVenues.all()
-#
-#     def perform_create(self, serializer):
-#         pass
-#
-#     def post(self, request, *args, **kwargs):
-#         user = self.request.user
-#         venue = Venue.objects.get(pk=self.kwargs["venueId"])
-#         favourite_venue, created = FavouriteVenues.objects.get_or_create(user=user, venue=venue)
-#         print(favourite_venue, created)
-#
-#         queryset = self.get_queryset()
-#         page = self.paginate_queryset(queryset)
-#
-#         serialized_data = FavouriteVenuesSerializer(page, many=True).data
-#         return Response(serialized_data, status=status.HTTP_201_CREATED)
-#
-#     def delete(self, request, *args, **kwargs):
-#         user = self.request.user
-#         venue = Venue.objects.filter(pk=self.kwargs["venueId"])
-#         fav, deleted = FavouriteVenues.objects.filter(user=user, venue=venue).delete()
-#         print(fav, deleted)
-#         queryset = self.get_queryset()
-#         page = self.paginate_queryset(queryset)
-#
-#         serialized_data = FavouriteVenuesSerializer(page, many=True).data
-#         return Response(serialized_data, status=status.HTTP_200_OK)
 
 class FavouriteVenueCreateDestroyView(generics.ListCreateAPIView, generics.DestroyAPIView):
     serializer_class = FavouriteVenuesSerializer
