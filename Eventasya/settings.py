@@ -211,5 +211,7 @@ from firebase_admin import credentials
 
 # Configure the storage bucket URL
 cred = credentials.Certificate("eventasya-platform-firebase.json")
-firebase_admin.initialize_app(credential=cred)
-FIREBASE_STORAGE_BUCKET = 'gs://eventasya-platform-app.appspot.com'
+firebase_admin.initialize_app(cred, {
+    'storageBucket': 'eventasya-platform-app.appspot.com'
+})
+FIREBASE_STORAGE_BUCKET = 'eventasya-platform-app.appspot.com'
