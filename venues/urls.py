@@ -15,7 +15,7 @@ urlpatterns = [
     path('images/<int:pk>/', VenueImagesUpdateDelete.as_view(), name='image-update-delete'),
     path('owner/venues/', VenueOwnerVenueListView.as_view(), name='venue-owner-venue-list'),
 
-    path('bookings/', VenueBookingListCreateView.as_view(), name='venue-booking-list-create'),
+    path('<int:pk>/bookings/', VenueBookingListCreateView.as_view(), name='venue-booking-list-create'),
     path('owner/bookings/', VenueOwnerBookingListView.as_view(), name='venue-owner-booking-list-create'),
     path('user/bookings/', UserBookingListView.as_view(), name='user-booking-list'),
     path('user/bookings/<int:pk>/', VenueBookingRetrieveUpdateDestroyView.as_view(), name='venue-booking-details'),
