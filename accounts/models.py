@@ -126,26 +126,7 @@ class PreviousWork(models.Model):
 
 class WorkImages(models.Model):
     previous_work = models.ForeignKey(PreviousWork, on_delete=models.CASCADE, related_name='images')
-    image = models.ImageField(blank=True, null=True, upload_to='temp_work_images')  # Temporarily store the image locally
+    image = models.ImageField(blank=True, null=True, upload_to=upload_to_prev_work)
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        if self.image:
-            self.upload_image_to_firebase_storage()
-
-    def upload_image_to_firebase_storage(self):
-        image_path = self.image.path
-        destination_path = f'prev/images/{self.previous_work.event_planner}/{self.image.name}'
-        blob = storage.bucket().blob(destination_path)
-        blob.upload_from_filename(image_path)
-        self.image.delete()  # Delete the temporarily stored image
-
-    def delete(self, *args, **kwargs):
-        super().delete(*args, **kwargs)
-        self.delete_image_from_firebase_storage()
-
-    def delete_image_from_firebase_storage(self):
-        destination_path = f'prev/images/{self.previous_work.event_planner}/{self.image.name}'
-        blob = storage.bucket().blob(destination_path)
-        if blob.exists():
-            blob.delete()

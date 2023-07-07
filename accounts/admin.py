@@ -4,6 +4,7 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+from django.utils.html import format_html
 
 from .forms import CustomUserChangeForm, CustomUserCreationForm
 from .models import EventPlanner, PreviousWork, WorkImages
@@ -33,41 +34,55 @@ class CustomUserAdmin(UserAdmin):
     )
 
 
+# @admin.register(PreviousWork)
+# class PreviousWorkAdmin(admin.ModelAdmin):
+#     # Customize the display fields in the admin list view
+#     list_display = ('id', 'event_planner', 'title', 'date', 'capacity', 'event_type')
+#     # Add filter functionality for the specified fields
+#     list_filter = ('event_planner', 'date', 'event_type')
+#     # Add search functionality for the specified fields
+#     search_fields = ('event_planner__username', 'title', 'description')
+#
+#     # Define a nested inline admin for WorkImages
+#     class WorkImagesInline(admin.TabularInline):
+#         model = WorkImages
+#
+#     # Include the nested inline admin in the PreviousWork admin view
+#     inlines = [WorkImagesInline]
+
+class WorkImagesInline(admin.TabularInline):
+    model = WorkImages
+
+
+class PrevInline(admin.TabularInline):
+    model = PreviousWork
+
+
+@admin.register(EventPlanner)
+class EventPlannerAdmin(admin.ModelAdmin):
+    model = EventPlanner
+    list_display = ('id', 'name', 'email', 'role')
+    list_filter = ('role',)
+    ordering = ('id',)
+    inlines = [PrevInline]
+
+
 @admin.register(PreviousWork)
 class PreviousWorkAdmin(admin.ModelAdmin):
-    # Customize the display fields in the admin list view
+    model = PreviousWork
     list_display = ('id', 'event_planner', 'title', 'date', 'capacity', 'event_type')
-    # Add filter functionality for the specified fields
-    list_filter = ('event_planner', 'date', 'event_type')
-    # Add search functionality for the specified fields
-    search_fields = ('event_planner__username', 'title', 'description')
-
-    # Define a nested inline admin for WorkImages
-    class WorkImagesInline(admin.TabularInline):
-        model = WorkImages
-
-    # Include the nested inline admin in the PreviousWork admin view
     inlines = [WorkImagesInline]
 
 
 @admin.register(WorkImages)
 class WorkImagesAdmin(admin.ModelAdmin):
-    # Customize the display fields in the admin list view
-    list_display = ('id', 'previous_work', 'image')
+    model = WorkImages
+    list_display = ('id', 'prev_work', 'display_image')
 
+    def prev_work(self, obj):
+        return obj.previous_work.title
 
-class PreviousWorkInline(admin.TabularInline):
-    model = PreviousWork
+    def display_image(self, obj):
+        return format_html('<img src="{}" height="70px" width="50px"/>', obj.image.url)
 
-
-class EventPlannerAdmin(CustomUserAdmin):
-    # Customize the display fields in the admin list view
-    list_display = ('id', 'username', 'email', 'first_name', 'last_name')
-    # Add search functionality for the specified fields
-    search_fields = ('username', 'email', 'first_name', 'last_name')
-    inlines = [PreviousWorkInline]
-
-
-admin.site.register(EventPlanner, EventPlannerAdmin)
-# admin.site.register(PreviousWork, PreviousWorkAdmin)
-# admin.site.register(WorkImages, WorkImagesAdmin)
+    display_image.short_description = 'Image'
