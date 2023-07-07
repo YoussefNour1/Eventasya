@@ -47,13 +47,10 @@ class EventBookingSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         event = validated_data['event']
-        ticket_type = validated_data['ticket_type']
         quantity = validated_data['quantity']
         ticket_price = validated_data['ticket_price']
-        total_price = ticket_price * quantity
+        validated_data['total_price'] = ticket_price * quantity
 
-        booking = EventBooking.objects.create(event=event, user=self.context['request'].user, ticket_type=ticket_type,
-                                              quantity=quantity, total_price=total_price, ticket_price=ticket_price)
+        booking = EventBooking.objects.create(event=event, user=self.context['request'].user, **validated_data)
 
         return booking
-
