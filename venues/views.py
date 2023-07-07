@@ -175,7 +175,8 @@ class VenueBookingListCreateView(generics.ListCreateAPIView):
     permission_classes = [IsAuthenticated, ]
 
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user, venue=self.kwargs['pk'])
+        venue = Venue.objects.get(pk=self.kwargs['pk'])
+        serializer.save(user=self.request.user, venue=venue)
 
 
 class VenueBookingRetrieveUpdateDestroyView(generics.RetrieveUpdateDestroyAPIView):

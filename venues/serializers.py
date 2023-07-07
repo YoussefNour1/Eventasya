@@ -37,7 +37,7 @@ class VenueBookingSerializer(serializers.ModelSerializer):
     class Meta:
         model = VenueBooking
         fields = '__all__'
-        read_only_fields = ['user']
+        read_only_fields = ['user', 'venue']
 
     def create(self, validated_data):
         venue = validated_data['venue']
