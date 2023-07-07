@@ -68,15 +68,6 @@ class User(AbstractUser):
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
-        if self.img:
-            self.upload_image_to_firebase_storage()
-
-    def upload_image_to_firebase_storage(self):
-        image_path = self.img.path
-        destination_path = f'users/images/{self.email}.{self.img.name.split(".")[-1]}'
-        blob = storage.bucket().blob(destination_path)
-        blob.upload_from_filename(image_path)
-
 
 
 # normal user model, profile and manager

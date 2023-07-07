@@ -27,6 +27,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
+    'cloudinary',
     "debug_toolbar",
     'rest_framework',
     'drf_yasg',
@@ -173,8 +175,8 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles_build", 'static')
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+DEFAULT_FILE_STORAGE='cloudinary_storage.storage.MediaCloudinaryStorage'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -190,6 +192,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD') or 'PGUq0SnkVc9Xvh5N'
 # EMAIL_USE_TLS = True
 # EMAIL_USE_SSL = False
+
+CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': "dn6wxyqha",
+    'API_KEY': "282187191632465",
+    'API_SECRET': "T0EvHG57uh6d86nPcrF_9HBWkms"
+}
 
 if DEBUG:
     MIDDLEWARE += ['debug_toolbar.middleware.DebugToolbarMiddleware']

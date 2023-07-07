@@ -4,22 +4,33 @@ from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.contrib import admin
 from django.contrib.auth.admin import UserAdmin
+
+from .forms import CustomUserChangeForm, CustomUserCreationForm
 from .models import EventPlanner, PreviousWork, WorkImages
 
 User = get_user_model()
 
 
 @admin.register(User)
-class UserAdmin(admin.ModelAdmin):
+class CustomUserAdmin(UserAdmin):
+    form = CustomUserChangeForm
+    add_form = CustomUserCreationForm
     list_display = ('id', 'name', 'email', 'role')
     list_filter = ('role',)
-
-
-class EventPlannerAdmin(UserAdmin):
-    # Customize the display fields in the admin list view
-    list_display = ('id', 'username', 'email', 'first_name', 'last_name')
-    # Add search functionality for the specified fields
-    search_fields = ('username', 'email', 'first_name', 'last_name')
+    ordering = ('id',)
+    fieldsets = [
+        (None, {'fields': ('email', 'password')}),
+        ('Personal Info', {'fields': ('name', 'role', 'gender')}),
+        ('Permissions', {'fields': ('is_active', 'is_staff', 'is_superuser')}),
+        ('Important Dates', {'fields': ('last_login', 'date_joined')}),
+        ('Other', {'fields': ('otp', 'activation_key')}),
+    ]
+    add_fieldsets = (
+        (None, {
+            'classes': ('wide',),
+            'fields': ('email', 'name', 'password1', 'password2', 'role', 'gender', 'img'),
+        }),
+    )
 
 
 @admin.register(PreviousWork)
@@ -43,6 +54,18 @@ class PreviousWorkAdmin(admin.ModelAdmin):
 class WorkImagesAdmin(admin.ModelAdmin):
     # Customize the display fields in the admin list view
     list_display = ('id', 'previous_work', 'image')
+
+
+class PreviousWorkInline(admin.TabularInline):
+    model = PreviousWork
+
+
+class EventPlannerAdmin(CustomUserAdmin):
+    # Customize the display fields in the admin list view
+    list_display = ('id', 'username', 'email', 'first_name', 'last_name')
+    # Add search functionality for the specified fields
+    search_fields = ('username', 'email', 'first_name', 'last_name')
+    inlines = [PreviousWorkInline]
 
 
 admin.site.register(EventPlanner, EventPlannerAdmin)

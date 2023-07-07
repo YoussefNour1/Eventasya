@@ -4,14 +4,7 @@ from .models import Post, Comment
 
 class CommentInline(admin.TabularInline):
     model = Comment
-    readonly_fields = ['content']
-    extra = 0
-
-    def has_change_permission(self, request, obj=None):
-        return False
-
-    def has_delete_permission(self, request, obj=None):
-        return True
+    extra = 1
 
 
 @admin.register(Comment)
@@ -23,7 +16,7 @@ class CommentAdmin(admin.ModelAdmin):
     def has_delete_permission(self, request, obj=None):
         return True
 
-
+    
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     model = Post
@@ -35,5 +28,3 @@ class PostAdmin(admin.ModelAdmin):
         if obj is not None and request.user == obj.user:
             return True
         return False
-
-
