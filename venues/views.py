@@ -39,11 +39,11 @@ class VenueListCreateView(generics.ListCreateAPIView):
 
     def get_queryset(self):
         queryset = super().get_queryset()
-        venue_ids = self.request.query_params.getlist('venue_ids')
+        venue_ids = self.request.query_params.get('venues')
         if venue_ids:
             try:
-                venue_ids = [int(id) for id in venue_ids]
-                queryset = self.queryset.filter(id__in=venue_ids)
+                venue_ids = [int(pk) for pk in venue_ids.split(',')]
+                queryset = self.queryset.filter(pk__in=venue_ids)
             except ValueError:
                 raise Http404("Invalid venue_ids")
 
