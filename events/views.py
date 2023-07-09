@@ -37,19 +37,8 @@ class TicketsListCreateView(generics.ListCreateAPIView):
         event = Event.objects.get(pk=self.kwargs['eventId'])
         return event.ticket_set.all()
 
-    def post(self, request, *args, **kwargs):
-        event = Event.objects.get(pk=self.kwargs['eventId'])
-        tickets_data = request.data.get('tickets', [])
-
-        tickets = []
-        with transaction.atomic():
-            for ticket_data in tickets_data:
-                serializer = self.get_serializer(data=ticket_data)
-                serializer.is_valid(raise_exception=True)
-                ticket = serializer.save(event=event)
-                tickets.append(ticket)
-
-        return Response(TicketSerializer(tickets, many=True), status=status.HTTP_201_CREATED)
+    def perform_create(self, serializer):
+        serializer.save(event=self.kwargs['eventId'])
 
 
 class FavouriteEventView(generics.ListCreateAPIView, generics.DestroyAPIView):

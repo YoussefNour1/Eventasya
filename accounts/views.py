@@ -201,15 +201,6 @@ class ChangePasswordView(APIView):
         user.save()
         return Response({"message": "Password changed successfully"}, status=status.HTTP_200_OK)
 
-
-class PreviousWorkListCreate(generics.ListCreateAPIView):
-    serializer_class = PreviousWorksSerializer
-
-    def get_queryset(self):
-        planner = self.kwargs['planner']
-        return PreviousWork.objects.filter(event_planner_id=planner)
-
-
 class EventPlannersList(generics.ListAPIView):
     queryset = EventPlanner.objects.all()
     serializer_class = EventPlannerSerializer
@@ -220,10 +211,20 @@ class SinglePrevWork(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = PreviousWorksSerializer
     queryset = PreviousWork.objects.all()
 
+    def get_permissions(self):
+        if self.request.method in ['PUT', 'PATCH', 'DELETE']:
+            return [IsEventPlanner()]
+        else:
+            return []
 
-class PrevWorkCreate(generics.ListAPIView):
+
+class PreviousWorkListCreate(generics.ListCreateAPIView):
 
     serializer_class = PreviousWorksSerializer
+
+    def get_queryset(self):
+        planner = self.kwargs['planner']
+        return PreviousWork.objects.filter(event_planner_id=planner)
 
     def get_permissions(self):
         if self.request.method == 'POST':

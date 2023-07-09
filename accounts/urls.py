@@ -1,7 +1,7 @@
 from django.urls import path
 
 from accounts.views import SignUpAPIView, LoginView, UserDetailsAPIView, signup_verify, ForgotPasswordView, \
-    ForgotPasswordVerifyView, ChangePasswordView, EventPlannersList, PreviousWorkListCreate, PrevWorkCreate
+    ForgotPasswordVerifyView, ChangePasswordView, EventPlannersList, PreviousWorkListCreate
 
 urlpatterns = [
     path("signup/", SignUpAPIView.as_view(), name="signup"),
@@ -13,7 +13,7 @@ urlpatterns = [
     path('password/change/', ChangePasswordView.as_view(), name='change-password'),
 
     path('planners/', EventPlannersList.as_view(), name='all-planners'),
-    path('planners/prev-works/', PrevWorkCreate.as_view(), name='create-prev-work'),
+    path('planners/prev-works/', PreviousWorkListCreate.as_view(), name='create-prev-work'),
     path('planners/<int:planner>/prev-works/', PreviousWorkListCreate.as_view(), name='previous-work'),
 ]
 
