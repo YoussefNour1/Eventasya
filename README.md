@@ -2,7 +2,7 @@
 # Eventasya Django Backend
 
 Eventasya is a mobile application for managing events, renting venues, and an exhibition of the previous work of event organizers and planners.
-The backend is powered by Django Rest Framework and utilizes MySQL for the database. Firebase is integrated for real-time chat functionality and user authentication.
+The backend is powered by Django Rest Framework and utilizes MySQL for the database.
 
 ## Table of Contents
 - [Features](#features)
@@ -17,9 +17,11 @@ The backend is powered by Django Rest Framework and utilizes MySQL for the datab
 
 ## Features
 - User registration and authentication with Django.
+- Venue owners can upload their venues on the system with all details about each venue.
+- Users can book any available venue.
 - Event creation and management.
 - Event booking with unique booking IDs.
-- Real-time chat integration using Firebase.
+- Event planners can publish their previous works and events they organized.
 - Image uploads for events.
 
 ## Technologies Used
