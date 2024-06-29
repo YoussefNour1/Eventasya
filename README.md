@@ -1,4 +1,4 @@
-```markdown
+
 # Eventasya Django Backend
 
 Eventasya is a mobile application for managing events, renting venues, and an exhibition of the previous work of event organizers and planners.
