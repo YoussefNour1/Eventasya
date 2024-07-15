@@ -34,7 +34,7 @@ The backend is powered by Django Rest Framework and utilizes MySQL for the datab
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/your-username/eventasya.git
+   git clone https://github.com/YoussefNour1/eventasya.git
    cd eventasya
    ```
 
